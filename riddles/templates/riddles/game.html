@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogicLink - თავსატეხები</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .user-info {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .user-info strong {
+            color: #667eea;
+        }
+        .coins {
+            text-align: center;
+            font-size: 24px;
+            color: #f39c12;
+            margin-bottom: 20px;
+        }
+        .pro-offer {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .pro-offer h3 {
+            margin-bottom: 10px;
+        }
+        .pro-offer a {
+            display: inline-block;
+            background: white;
+            color: #f5576c;
+            padding: 10px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .riddle-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            font-size: 20px;
+            line-height: 1.6;
+            text-align: center;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .skip-btn {
+            width: 100%;
+            background: #95a5a6;
+        }
+        .skip-btn:hover {
+            background: #7f8c8d;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .auth-buttons a {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .login-btn {
+            background: #667eea;
+            color: white;
+        }
+        .register-btn {
+            background: #f39c12;
+            color: white;
+        }
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 LogicLink</h1>
+        
+        {% if user.is_authenticated %}
+            <div class="user-info">
+                👤 <strong>{{ user.username }}</strong>
+                {% if user.profile.is_pro %}
+                    <span style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 5px 10px; border-radius: 5px; margin-left: 10px;">⭐ PRO</span>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="coins">💰 კოინები: {{ total_coins }}</div>
+
+        {% if not user.is_authenticated and total_coins >= 500 %}
+            <div class="pro-offer">
+                <h3>🎉 გილოცავ!</h3>
+                <p>შენ დააგროვე 500+ კოინი!</p>
+                <p>დარეგისტრირდი ახლავე და მიიღე <strong>PRO სტატუსი</strong>!</p>
+                <a href="{% url 'register' %}">✨ PRO-ს მიღება</a>
+            </div>
+        {% endif %}
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if all_solved %}
+            <div class="riddle-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <h2>🎊 გილოცავ!</h2>
+                <p style="margin-top: 20px; font-size: 18px;">შენ ამოხსენი ყველა თავსატეხი!</p>
+                <p style="margin-top: 10px;">💰 სულ დააგროვე: <strong>{{ total_coins }}</strong> კოინი</p>
+            </div>
+        {% elif riddle %}
+            <div class="riddle-box">
+                {{ riddle.question }}
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" name="answer" placeholder="შენი პასუხი..." autofocus>
+                <button type="submit">✓ პასუხი</button>
+            </form>
+
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" name="skip" class="skip-btn">⏭️ გამოტოვება</button>
+            </form>
+        {% else %}
+            <div class="riddle-box">
+                😕 თავსატეხები ჯერ არ არის დამატებული. გადადი ადმინ პანელში და დაამატე!
+            </div>
+        {% endif %}
+
+        <div class="auth-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="logout-btn">🚪 გასვლა</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="login-btn">🔐 შესვლა</a>
+                <a href="{% url 'register' %}" class="register-btn">✨ რეგისტრაცია</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
